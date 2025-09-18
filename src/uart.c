@@ -85,6 +85,27 @@ Status initialise_uart(void) {
     return SUCCESS;
 }
 
+void stop_uart(void) {
+    // Disable global interrupts
+    INTERRUPT_DISABLE();
+
+    // Disable UART peripheral
+    // Get status register state
+    uint16_t status_register_state = read_address_16bit(STATUS_REGISTER_ADDRESS);
+    // Set interrupt bit to disable interrupts
+    status_register_state &= ~(1U << INTERRUPT_ENABLE_BIT) ;
+    // Set Tx Enable bit to disable
+    status_register_state &= ~(1U << TX_ENABLE_BIT);
+    // Set Rx Enable bit to disable
+    status_register_state &= ~(1U << RX_ENABLE_BIT);
+    // Write updated status register
+    write_address_16bit(STATUS_REGISTER_ADDRESS, status_register_state);
+
+    // Deleting queues and freeing memory
+    delete_queue(transmit_queue);
+    delete_queue(receive_queue);
+}
+
 
 int main() {
     printf("Hello Testing\n");

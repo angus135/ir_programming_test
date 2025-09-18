@@ -11,6 +11,8 @@ void uart_isr(void);
 
 Status initialise_uart(void);
 
+void stop_uart(void);
+
 int main();
 
 #endif
