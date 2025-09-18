@@ -30,7 +30,7 @@ Status dequeue(Queue* queue, uint8_t* data) {
     pthread_mutex_lock(&queue->mutex);
     if (queue->size == 0) {
         pthread_mutex_unlock(&queue->mutex);
-        return FAILURE;
+        return EMPTY;
     }
     *data = queue->data[queue->front]; 
     queue->front = (queue->front + 1) % queue->array_length;
@@ -44,7 +44,7 @@ Status enqueue(Queue* queue, uint8_t data) {
     pthread_mutex_lock(&queue->mutex);
     if (queue->size == queue->array_length) {
         pthread_mutex_unlock(&queue->mutex);
-        return FAILURE;
+        return BUSY;
     }
     queue->data[queue->rear] = data;
     queue->rear = (queue->rear + 1) % queue->array_length;

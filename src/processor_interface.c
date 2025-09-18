@@ -11,7 +11,7 @@
 // Byte 3 - Second Byte of data register
 static volatile uint8_t register_values[4] = {0, 0, 0, 0};
 
-uint8_t read_address_8bit(void* address) {
+uint8_t read_address_8bit(uint16_t* address) {
     switch ((uintptr_t)address) {
         case STATUS_REGISTER_ADDRESS:
             return (uint8_t)(register_values[0]);
@@ -30,7 +30,7 @@ uint8_t read_address_8bit(void* address) {
     }
 }
 
-uint16_t read_address_16bit(void* address) {
+uint16_t read_address_16bit(uint16_t* address) {
     switch ((uintptr_t)address) {
         case STATUS_REGISTER_ADDRESS-1:
             return (uint16_t)(register_values[0]<<8);
@@ -52,7 +52,7 @@ uint16_t read_address_16bit(void* address) {
     }
 }
 
-uint32_t read_address_32bit(void* address) {
+uint32_t read_address_32bit(uint16_t* address) {
     switch ((uintptr_t)address) {
         case STATUS_REGISTER_ADDRESS-3:
             return (uint32_t)(register_values[0]<<24);
@@ -88,7 +88,7 @@ static void apply_status_write(uint16_t value) {
     register_values[1] = (new_val >> 8) & 0xFF;
 }
 
-void write_address_8bit(void* address, uint8_t value) {
+void write_address_8bit(uint16_t* address, uint8_t value) {
     switch ((uintptr_t)address) {
         case STATUS_REGISTER_ADDRESS:
             apply_status_write((register_values[1] << 8) | value);
@@ -109,7 +109,7 @@ void write_address_8bit(void* address, uint8_t value) {
     }
 }
 
-void write_address_16bit(void* address, uint16_t value) {
+void write_address_16bit(uint16_t* address, uint16_t value) {
     switch ((uintptr_t)address) {
         case STATUS_REGISTER_ADDRESS:
             apply_status_write(value);
@@ -125,7 +125,7 @@ void write_address_16bit(void* address, uint16_t value) {
     }
 }
 
-void write_address_32bit(void* address, uint32_t value) {
+void write_address_32bit(uint16_t* address, uint32_t value) {
     switch ((uintptr_t)address) {
         case STATUS_REGISTER_ADDRESS:
             apply_status_write(value & 0xFFFF);

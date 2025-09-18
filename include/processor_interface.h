@@ -25,12 +25,12 @@ static volatile uint8_t are_interrupts_enabled = 0;
 #define INTERRUPT_ENABLE() are_interrupts_enabled = 1
 #define IS_INTERRUPT_ENABLED() (are_interrupts_enabled)
 
-uint8_t read_address_8bit(void* address);
-uint16_t read_address_16bit(void* address);
-uint32_t read_address_32bit(void* address);
+uint8_t read_address_8bit(uint16_t* address);
+uint16_t read_address_16bit(uint16_t* address);
+uint32_t read_address_32bit(uint16_t* address);
 
-void write_address_8bit(void* address, uint8_t value);
-void write_address_16bit(void* address, uint16_t value);
-void write_address_32bit(void* address, uint32_t value);
+void write_address_8bit(uint16_t* address, uint8_t value);
+void write_address_16bit(uint16_t* address, uint16_t value);
+void write_address_32bit(uint16_t* address, uint32_t value);
 
 #endif

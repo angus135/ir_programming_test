@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -std=c11 -O2 -Wall -Wextra -pthread -Iinclude
 
-SRCS = src/uart.c src/uart.c #test/test.c
+SRCS = src/uart.c src/queue.c src/processor_interface.c #test/test.c
 OBJS = $(SRCS:.c=.o)
 OUTDIR = output
 OBJS = $(SRCS:%=$(OUTDIR)/%.o)

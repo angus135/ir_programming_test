@@ -21,6 +21,8 @@
 // Status class to be used globally
 typedef enum Status {
     SUCCESS,
+    BUSY,
+    EMPTY,
     FAILURE
 } Status;
 
