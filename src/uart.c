@@ -200,8 +200,3 @@ Status uart_transmit_error(void) {
         return FAILURE;
     }
 }
-
-int main() {
-    printf("Hello Testing\n");
-    return 0;
-}

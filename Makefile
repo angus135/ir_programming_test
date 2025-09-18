@@ -1,11 +1,11 @@
 CC = gcc
 CFLAGS = -std=c11 -O2 -Wall -Wextra -pthread -Iinclude
 
-SRCS = src/uart.c src/queue.c src/processor_interface.c #test/test.c
+SRCS = src/uart.c src/queue.c src/processor_interface.c src/main.c
 OBJS = $(SRCS:.c=.o)
 OUTDIR = output
 OBJS = $(SRCS:%=$(OUTDIR)/%.o)
-TARGET = $(OUTDIR)/uart_test
+TARGET = $(OUTDIR)/main
 
 .PHONY: all clean test
 

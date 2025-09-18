@@ -1,7 +1,6 @@
 #ifndef UART_H
 #define UART_H
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include "macros.h"
@@ -29,7 +28,5 @@ uint32_t uart_total_bytes_received(void);
 Status uart_receive_error(void);
 
 Status uart_transmit_error(void);
-
-int main();
 
 #endif
