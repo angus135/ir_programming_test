@@ -20,13 +20,15 @@ Queue* initialise_queue(uint16_t max_queue_size) {
 }
 
 void delete_queue(Queue* queue) {
+    pthread_mutex_destroy(&queue->mutex);
     free(queue->data);
     free(queue);
 }
 
 Status dequeue(Queue* queue, uint8_t* data) {
+    if (queue == NULL || data == NULL) return FAILURE;
     pthread_mutex_lock(&queue->mutex);
-    if (queue->size == 0 || queue == NULL || data == NULL) {
+    if (queue->size == 0) {
         pthread_mutex_unlock(&queue->mutex);
         return FAILURE;
     }
@@ -38,8 +40,9 @@ Status dequeue(Queue* queue, uint8_t* data) {
 }
 
 Status enqueue(Queue* queue, uint8_t data) {
+    if (queue == NULL) return FAILURE;
     pthread_mutex_lock(&queue->mutex);
-    if (queue->size == queue->array_length || queue == NULL) {
+    if (queue->size == queue->array_length) {
         pthread_mutex_unlock(&queue->mutex);
         return FAILURE;
     }
@@ -51,11 +54,21 @@ Status enqueue(Queue* queue, uint8_t data) {
 }
 
 uint8_t is_queue_full(Queue* queue) {
-    thread_mutex_lock(&queue->mutex);
-    if (queue == NULL) { // Error
+    if (queue == NULL) return 2; // Error
+    pthread_mutex_lock(&queue->mutex);
+    if (queue->size == queue->array_length) { // Queue Full
         pthread_mutex_unlock(&queue->mutex);
-        return 2;
-    } else if (queue->size == queue->array_length) { // Queue Full
+        return 1;
+    } else { // Queue not full
+        pthread_mutex_unlock(&queue->mutex);
+        return 0;
+    }
+}
+
+uint8_t is_queue_empty(Queue* queue) {
+    if (queue == NULL) return 2; // Error
+    pthread_mutex_lock(&queue->mutex);
+    if (queue->size == 0) { // Queue Empty
         pthread_mutex_unlock(&queue->mutex);
         return 1;
     } else { // Queue not full
