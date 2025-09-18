@@ -1,6 +1,7 @@
 #include "uart.h"
 #include "queue.h"
 #include "processor_interface.h"
+#include <stdio.h>
 
 static Queue* transmit_queue;
 static Queue* receive_queue;
@@ -19,14 +20,21 @@ void uart_isr(void) {
     // and that there's no dedicated interrupt clearing required
 
     uint16_t status_register = read_address_16bit((uint16_t*)STATUS_REGISTER_ADDRESS);
-    if ((status_register & RX_INTERRUPT_BITS) == RX_INTERRUPT_BITS) {
+    if ((status_register>>RX_ERROR_BIT)&0x1) {
+        // Check the Rx Error bit
+        receive_queue_error = 1;
+        // Assuming here that still increment bytes received even if there is an error, 
+        // if didn't want to do this then remove this line
+        bytes_received++; 
+    } else if ((status_register & RX_INTERRUPT_BITS) == RX_INTERRUPT_BITS) {
         // Read from UART and add to receive queue
         uint8_t data = read_address_8bit((uint16_t*)DATA_REGISTER_ADDRESS);
         // Assume here received data means received from UART rather than received and added to queue
         // If the latter then should check if queue full first then if there's no error read data register and increment counter
         bytes_received++;
-        // Check if receive queue is full
+
         if (is_queue_full(receive_queue)) {
+            // Check if receive queue is full
             receive_queue_error = 1;
         } else {
             Status return_status = enqueue(receive_queue, data); // Note here would use ISR safe enqueuing
@@ -198,5 +206,23 @@ Status uart_transmit_error(void) {
         return SUCCESS;
     } else {
         return FAILURE;
+    }
+}
+
+void display_uart_status(void) {
+    printf("UART Receive Queue length : %d\n", uart_receive_queue_length());
+    printf("UART Transmit Queue length : %d\n", uart_transmit_queue_length());
+    printf("Total bytes received : %d\n", uart_total_bytes_received());
+    printf("UART Receive Receive Error Status : ");
+    if (uart_receive_error() == SUCCESS) {
+        printf("No Error\n");
+    } else {
+        printf("Error\n");
+    }
+    printf("UART Receive Transmit Error Status : ");
+    if (uart_transmit_error() == SUCCESS) {
+        printf("No Error\n");
+    } else {
+        printf("Error\n");
     }
 }

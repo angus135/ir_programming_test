@@ -29,4 +29,6 @@ Status uart_receive_error(void);
 
 Status uart_transmit_error(void);
 
+void display_uart_status(void);
+
 #endif

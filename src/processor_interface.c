@@ -1,6 +1,13 @@
 #include "processor_interface.h"
+#include <stdio.h>
 // UART status register information
 #define STATUS_REGISTER_ADDRESS 0x80000120
+#define RX_NOT_EMPTY_BIT 0
+#define TX_NOT_FULL_BIT 1
+#define RX_ERROR_BIT 2
+#define TX_ENABLE_BIT 13
+#define RX_ENABLE_BIT 14
+#define INTERRUPT_ENABLE_BIT 15
 
 // UART data register information
 #define DATA_REGISTER_ADDRESS 0x80000122 // Access most recently received byte here
@@ -81,6 +88,8 @@ uint32_t read_address_32bit(uint16_t* address) {
 }
 
 // Used generative AI to fill these out but had some slight adjustments
+// But I can explain that this is essentially acting to mask so that only writable bits are written to
+// And read only bits are left as is
 static void apply_status_write(uint16_t value) {
     uint16_t current = (register_values[1] << 8) | register_values[0];
     uint16_t new_val = (current & ~STATUS_WRITABLE_MASK) | (value & STATUS_WRITABLE_MASK);
@@ -138,4 +147,44 @@ void write_address_32bit(uint16_t* address, uint32_t value) {
             // ignore invalid writes
             break;
     }
+}
+
+void display_register_status(void) {
+    printf("RX Register Not Empty: %d\n", register_values[0]&0x1);
+    printf("TX Register Not Full : %d\n", (register_values[0]>>1)&0x1);
+    printf("RX Error : %d\n", (register_values[0]>>2)&0x1);
+    printf("TX Enable : %d\n", (register_values[1]>>5)&0x1);
+    printf("RX Enable : %d\n", (register_values[1]>>6)&0x1);
+    printf("UART Interrupt Enable : %d\n", (register_values[1]>>7)&0x1);
+    printf("Global Interrupt Enable : %d\n", IS_INTERRUPT_ENABLED());
+    printf("Data Register Data : Hex: %X, ascii: %c\n", register_values[2], register_values[2]);
+}
+
+void set_rx_not_empty(uint8_t value) {
+    if (value == 0) {
+        register_values[0] &= ~(1U << RX_NOT_EMPTY_BIT);
+    } else {
+        register_values[0] |= (1U << RX_NOT_EMPTY_BIT);
+    }
+    
+}
+
+void set_tx_not_full(uint8_t value) {
+    if (value == 0) {
+        register_values[0] &= ~(1U << TX_NOT_FULL_BIT);
+    } else {
+        register_values[0] |= (1U << TX_NOT_FULL_BIT);
+    }
+}
+
+void set_rx_error(uint8_t value) {
+    if (value == 0) {
+        register_values[0] &= ~(1U << RX_ERROR_BIT);
+    } else {
+        register_values[0] |= (1U << RX_ERROR_BIT);
+    }
+}
+
+void set_data_register(uint8_t value) {
+    register_values[2] = value;
 }

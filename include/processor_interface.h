@@ -33,4 +33,10 @@ void write_address_8bit(uint16_t* address, uint8_t value);
 void write_address_16bit(uint16_t* address, uint16_t value);
 void write_address_32bit(uint16_t* address, uint32_t value);
 
+void display_register_status(void);
+void set_rx_not_empty(uint8_t value);
+void set_tx_not_full(uint8_t value);
+void set_rx_error(uint8_t value);
+void set_data_register(uint8_t value);
+
 #endif
