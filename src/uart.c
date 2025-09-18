@@ -210,8 +210,8 @@ Status uart_transmit_error(void) {
 }
 
 void display_uart_status(void) {
-    printf("UART Receive Queue length : %d\n", uart_receive_queue_length());
-    printf("UART Transmit Queue length : %d\n", uart_transmit_queue_length());
+    printf("UART Receive Queue length : %ld\n", uart_receive_queue_length());
+    printf("UART Transmit Queue length : %ld\n", uart_transmit_queue_length());
     printf("Total bytes received : %d\n", uart_total_bytes_received());
     printf("UART Receive Receive Error Status : ");
     if (uart_receive_error() == SUCCESS) {

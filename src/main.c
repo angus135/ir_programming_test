@@ -2,7 +2,7 @@
 #include "uart.h"
 #include "processor_interface.h"
 
-void main(void) {
+int main(void) {
     printf("Beginning UART tests...\n\n\n");
     printf("Initial Register values:\n\n");
     display_register_status();
@@ -11,7 +11,7 @@ void main(void) {
     Status return_status = initialise_uart();
     if (return_status != SUCCESS) {
         printf("Initialising UART failed!\n");
-        return;
+        return 0;
     }
 
     printf("Register values after UART initilisation:\n\n");
@@ -71,8 +71,8 @@ void main(void) {
     uint8_t returning[5];
     size_t bytes_read;
     uart_read_bytes_from_receive_queue_nonblocking(returning, 5, &bytes_read);
-    printf("Read %d bytes from the buffer:", bytes_read);
-    for (int i=0; i<bytes_read; i++) {
+    printf("Read %ld bytes from the buffer:", bytes_read);
+    for (size_t i=0; i<bytes_read; i++) {
         printf("%c, ", returning[i]);
     }
 
@@ -87,5 +87,5 @@ void main(void) {
     printf("\nStopping UART\n");
     stop_uart();
 
-    return;
+    return 0;
 }
